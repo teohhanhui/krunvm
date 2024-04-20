@@ -3,6 +3,18 @@
 
 use libc::{c_char, c_int};
 
+pub const VIRGLRENDERER_USE_EGL: u32 = 1 << 0;
+pub const VIRGLRENDERER_THREAD_SYNC: u32 = 1 << 1;
+pub const VIRGLRENDERER_USE_GLX: u32 = 1 << 2;
+pub const VIRGLRENDERER_USE_SURFACELESS: u32 = 1 << 3;
+pub const VIRGLRENDERER_USE_GLES: u32 = 1 << 4;
+pub const VIRGLRENDERER_USE_EXTERNAL_BLOB: u32 = 1 << 5;
+pub const VIRGLRENDERER_VENUS: u32 = 1 << 6;
+pub const VIRGLRENDERER_NO_VIRGL: u32 = 1 << 7;
+pub const VIRGLRENDERER_USE_ASYNC_FENCE_CB: u32 = 1 << 8;
+pub const VIRGLRENDERER_RENDER_SERVER: u32 = 1 << 9;
+pub const VIRGLRENDERER_DRM: u32 = 1 << 10;
+
 #[link(name = "krun")]
 extern "C" {
     pub fn krun_set_log_level(level: u32) -> i32;
@@ -11,6 +23,7 @@ extern "C" {
     pub fn krun_set_vm_config(ctx: u32, num_vcpus: u8, ram_mib: u32) -> i32;
     pub fn krun_set_root(ctx: u32, root_path: *const c_char) -> i32;
     pub fn krun_set_mapped_volumes(ctx: u32, mapped_volumes: *const *const c_char) -> i32;
+    pub fn krun_set_gpu_options(ctx: u32, virgl_flags: u32) -> i32;
     pub fn krun_set_passt_fd(ctx: u32, fd: c_int) -> i32;
     pub fn krun_set_port_map(ctx: u32, port_map: *const *const c_char) -> i32;
     pub fn krun_set_workdir(ctx: u32, workdir_path: *const c_char) -> i32;

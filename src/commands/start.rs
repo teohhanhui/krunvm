@@ -17,7 +17,10 @@ use std::time::Duration;
 
 use tempdir::TempDir;
 
-use crate::bindings;
+use crate::bindings::{
+    self, VIRGLRENDERER_DRM, VIRGLRENDERER_THREAD_SYNC, VIRGLRENDERER_USE_ASYNC_FENCE_CB,
+    VIRGLRENDERER_USE_EGL,
+};
 use crate::utils::{mount_container, umount_container};
 use crate::{KrunvmConfig, VmConfig};
 
@@ -169,6 +172,16 @@ unsafe fn exec_vm(vmcfg: &VmConfig, rootfs: &str, cmd: Option<&str>, args: Vec<C
     }
 
     map_volumes(ctx, vmcfg, rootfs);
+
+    let virgl_flags = VIRGLRENDERER_USE_EGL
+        | VIRGLRENDERER_DRM
+        | VIRGLRENDERER_THREAD_SYNC
+        | VIRGLRENDERER_USE_ASYNC_FENCE_CB;
+    let ret = bindings::krun_set_gpu_options(ctx, virgl_flags);
+    if ret < 0 {
+        println!("Error setting GPU options");
+        std::process::exit(-1);
+    }
 
     let sp_path = tmp_dir.path().join("passt.sock");
     loop {
